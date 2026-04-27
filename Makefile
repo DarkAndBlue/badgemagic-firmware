@@ -18,8 +18,8 @@ OPT = -Os
 #######################################
 # Get current version
 #######################################
-VERSION = $(shell git describe --tags --dirty)
-VERSION_ABBR = $(shell git describe --abbrev=0 --tags 2>/dev/null || echo "unknown")
+VERSION ?= $(shell git describe --tags --dirty --always 2>/dev/null || echo "unknown")
+VERSION_ABBR ?= $(shell git describe --abbrev=0 --tags 2>/dev/null || echo "$(VERSION)")
 ifeq ($(VERSION_ABBR),unknown)
 $(warning Unable to determine version from git tags)
 endif
@@ -212,7 +212,7 @@ clean:
 	rm -f $(OBJECTS:%.o=%.d)
 	rm -f $(OBJECTS:%.o=%.lst)
 	rm -f $(BUILD_DIR)/$(TARGET).*
-	find $(BUILD_DIR) -type d -empty -delete 
+	@if [ -d "$(BUILD_DIR)" ]; then find "$(BUILD_DIR)" -type d -empty -delete; fi
 
 #######################################
 # dependencies
