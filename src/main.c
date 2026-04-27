@@ -2,16 +2,9 @@
 #include "CH58x_sys.h"
 #include "CH58xBLE_LIB.h"
 
+#include "xbm.h"
 #include "leddrv.h"
-#include "button.h"
 #include "bmlist.h"
-#include "resource.h"
-#include "animation.h"
-#include "font.h"
-
-#include "power.h"
-#include "data.h"
-#include "config.h"
 #include "debug.h"
 
 #include "ble/setup.h"
@@ -37,9 +30,20 @@ enum MODES {
 #define ANI_MARQUE_SPEED_T    (100000) // uS
 #define ANI_FLASH_SPEED_T     (500000) // uS
 #define SCAN_BOOTLD_BTN_SPEED_T         (200000) // uS
+
+static const uint32_t ani_speed_delays_us[8] = {
+	400000, // UI speed 1
+	200000, // UI speed 2
+	128000, // UI speed 3
+	96000,  // UI speed 4
+	64000,  // UI speed 5
+	48000,  // UI speed 6
+	40000,  // UI speed 7
+	32000,  // UI speed 8
+};
+
 #define ANI_SPEED_STRATEGY(speed_level) \
-				(ANI_BASE_SPEED_T - ((speed_level) \
-				* ANI_BASE_SPEED_T / 8))
+				(ani_speed_delays_us[((speed_level) > 7) ? 7 : (speed_level)])
 
 #define ANI_NEXT_STEP       (1 << 0)
 #define ANI_MARQUE          (1 << 1)
