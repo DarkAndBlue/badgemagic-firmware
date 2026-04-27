@@ -39,15 +39,16 @@ enum MODES {
 #define ANI_FLASH_SPEED_T     (500000) // uS
 #define SCAN_BOOTLD_BTN_SPEED_T         (200000) // uS
 
+#define SECOND (1_000_000) // uS = 1 second
 static const uint32_t ani_speed_delays_us[8] = {
-	400000, // UI speed 1
-	200000, // UI speed 2
-	128000, // UI speed 3
-	96000,  // UI speed 4
-	64000,  // UI speed 5
-	48000,  // UI speed 6
-	40000,  // UI speed 7
-	32000,  // UI speed 8
+	SECOND * 8,		// 8 sec	= speed 1
+	SECOND * 4,		// 4 sec	= speed 2
+	SECOND * 1.5,	// 1.5 sec	= speed 3
+	SECOND,			// 1 fps	= speed 4
+	SECOND / 1.5,	// 1.5 fps	= speed 5
+	SECOND / 2,		// 2 fps	= speed 6
+	SECOND / 4,		// 4 fps	= speed 7
+	SECOND / 8,		// 8 fps	= speed 8
 };
 
 #define ANI_SPEED_STRATEGY(speed_level) \
