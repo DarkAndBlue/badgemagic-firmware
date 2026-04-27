@@ -6,6 +6,14 @@
 #include "leddrv.h"
 #include "bmlist.h"
 #include "debug.h"
+#include "button.h"
+#include "resource.h"
+#include "animation.h"
+#include "font.h"
+
+#include "power.h"
+#include "data.h"
+#include "config.h"
 
 #include "ble/setup.h"
 #include "ble/profile.h"
