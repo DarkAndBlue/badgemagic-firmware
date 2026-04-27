@@ -33,8 +33,7 @@ uint16_t data_flash2newmem(uint8_t **chunk, uint32_t n)
 {
 	data_legacy_t header;
 	data_get_header(&header);
-
-	if (memcmp(header.header, "wang", 5))
+	if (memcmp(header.header, "wang", 4))
 		return 0;
 
 	uint16_t size = bswap16(header.sizes[n]) * LED_ROWS;
@@ -92,8 +91,8 @@ bm_t *flash2newbm(uint32_t n)
 	data_legacy_t header;
 	data_get_header(&header);
 
-	bm->is_flash = (header.flash & (1 << n)) != 0;
-	bm->is_marquee = (header.marquee & (1 << n)) != 0;
+	bm->is_flash = (header.flash & ((uint32_t)1 << n)) != 0;
+	bm->is_marquee = (header.marquee & ((uint32_t)1 << n)) != 0;
 	bm->modes = header.modes[n];
 
 	free(buf);

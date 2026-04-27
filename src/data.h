@@ -5,13 +5,15 @@
 
 #include "bmlist.h"
 
+#define MAX_MESSAGES 32
+
 typedef struct {
 	uint8_t header[6]; // magic
-	uint8_t flash;
-	uint8_t marquee;
-	uint8_t modes[8];
+	uint32_t flash;
+	uint32_t marquee;
+	uint8_t modes[MAX_MESSAGES];
 
-	uint16_t sizes[8]; // big endian
+	uint16_t sizes[MAX_MESSAGES]; // big endian
 
 	uint8_t pad6[6];
 	uint8_t timestamp[6];

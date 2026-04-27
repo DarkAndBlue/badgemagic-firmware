@@ -22,7 +22,7 @@ int legacy_ble_rx(uint8_t *val, uint16_t len)
 	PRINT("\n");
 
 	if (c == 0) {
-		if (memcmp(val, "wang", 5)) {
+		if (memcmp(val, "wang", 4)) {
 			PRINT("Not a header\n");
 			return -2;
 		} else {
@@ -34,7 +34,7 @@ int legacy_ble_rx(uint8_t *val, uint16_t len)
 			}
 		}
 	} else { // Re attempt after a failed transfer
-		if (!memcmp(val, "wang", 5)) {
+		if (!memcmp(val, "wang", 4)) {
 			free(data);
 			c = 0;
 			data = malloc(sizeof(data_legacy_t));
@@ -50,7 +50,7 @@ int legacy_ble_rx(uint8_t *val, uint16_t len)
 
 	if (c == 1) {
 		data_legacy_t *d = (data_legacy_t *)data;
-		n = bigendian16_sum(d->sizes, 8);
+		n = bigendian16_sum(d->sizes, MAX_MESSAGES);
 		data_len = LEGACY_HEADER_SIZE + LED_ROWS * n;
 		PRINT("Data len: %d\n", data_len);
 		data = realloc(data, data_len);
@@ -83,7 +83,7 @@ int legacy_usb_rx(uint8_t *buf, uint16_t len)
 				buf[4], buf[5], buf[6], buf[7]);
 
 	if (rx_len == 0) {
-		if (memcmp(buf, "wang", 5))
+		if (memcmp(buf, "wang", 4))
 			return -1;
 
 		int init_len = len > LEGACY_HEADER_SIZE ? len : sizeof(data_legacy_t);
@@ -96,7 +96,7 @@ int legacy_usb_rx(uint8_t *buf, uint16_t len)
 
 	if (!data_len) {
 		data_legacy_t *d = (data_legacy_t *)data;
-		uint16_t n = bigendian16_sum(d->sizes, 8);
+		uint16_t n = bigendian16_sum(d->sizes, MAX_MESSAGES);
 		data_len = LEGACY_HEADER_SIZE + LED_ROWS * n;
 		data = realloc(data, data_len);
 	}
