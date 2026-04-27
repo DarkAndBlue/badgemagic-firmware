@@ -39,7 +39,7 @@ enum MODES {
 #define ANI_FLASH_SPEED_T     (500000) // uS
 #define SCAN_BOOTLD_BTN_SPEED_T         (200000) // uS
 
-#define SECOND (1_000_000) // uS = 1 second
+#define SECOND (1000000) // uS = 1 second
 static const uint32_t ani_speed_delays_us[8] = {
 	SECOND * 8,		// 8 sec	= speed 1
 	SECOND * 4,		// 4 sec	= speed 2
