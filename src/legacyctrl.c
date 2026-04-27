@@ -48,19 +48,23 @@ int legacy_ble_rx(uint8_t *val, uint16_t len)
 	PRINT("Copying BLE value\n");
 	memcpy(data + c * len, val, len);
 
-	if (c == 1) {
+	if (c == 6) {
 		data_legacy_t *d = (data_legacy_t *)data;
 		n = bigendian16_sum(d->sizes, MAX_MESSAGES);
 		data_len = LEGACY_HEADER_SIZE + LED_ROWS * n;
 		PRINT("Data len: %d\n", data_len);
-		data = realloc(data, data_len);
-		if (!data) {
+		uint8_t *new_data = realloc(data, data_len);
+		if (!new_data) {
 			PRINT("insufficient memory\n");
+			free(data);
+			data = NULL;
+			c = 0;
 			return -3;
 		}
+		data = new_data;
 	}
 
-	if (c > 2 && ((c+1) * LEGACY_TRANSFER_WIDTH) >= data_len) {
+	if (c > 6 && ((c+1) * LEGACY_TRANSFER_WIDTH) >= data_len) {
 		PRINT("All bitmaps data received successfully\nWriting to flash.. ");
 		data_flatSave(data, data_len);
 		free(data);
@@ -94,11 +98,19 @@ int legacy_usb_rx(uint8_t *buf, uint16_t len)
 	memcpy(data + rx_len, buf, len);
 	rx_len += len;
 
-	if (!data_len) {
+	if (!data_len && rx_len >= LEGACY_HEADER_SIZE) {
 		data_legacy_t *d = (data_legacy_t *)data;
 		uint16_t n = bigendian16_sum(d->sizes, MAX_MESSAGES);
 		data_len = LEGACY_HEADER_SIZE + LED_ROWS * n;
-		data = realloc(data, data_len);
+		uint8_t *new_data = realloc(data, data_len);
+		if (!new_data) {
+			PRINT("insufficient memory\n");
+			free(data);
+			data = NULL;
+			rx_len = 0;
+			return -3;
+		}
+		data = new_data;
 	}
 
 	if ((rx_len > LEGACY_HEADER_SIZE) && rx_len >= data_len) {
