@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [master]
 
+permissions:
+  contents: read
+
 env:
   MRS_TOOLCHAIN: MRS_Toolchain_Linux_x64_V1.92
   USBC_BUILD_DIR: usb-c
@@ -36,8 +39,12 @@ jobs:
       - name: Build firmware
         run: |
           export PREFIX=${{ env.MRS_TOOLCHAIN }}/RISC-V_Embedded_GCC/bin/riscv-none-embed-
-          BUILD_DIR=${{ env.USBC_BUILD_DIR }} USBC_VERSION=1 make -j$(nproc)
-          BUILD_DIR=${{ env.MICROB_BUILD_DIR }} make -j$(nproc)
+
+          VERSION="$(git describe --tags --dirty --always 2>/dev/null || echo "${GITHUB_REF_NAME}-${GITHUB_SHA::7}")"
+          VERSION_ABBR="$(git describe --abbrev=0 --tags 2>/dev/null || echo "${GITHUB_REF_NAME}")"
+
+          BUILD_DIR=${{ env.USBC_BUILD_DIR }} USBC_VERSION=1 VERSION="$VERSION" VERSION_ABBR="$VERSION_ABBR" make clean all -j$(nproc)
+          BUILD_DIR=${{ env.MICROB_BUILD_DIR }} VERSION="$VERSION" VERSION_ABBR="$VERSION_ABBR" make clean all -j$(nproc)
 
       - uses: actions/upload-artifact@v4
         with:
