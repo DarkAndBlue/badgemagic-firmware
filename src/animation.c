@@ -6,7 +6,7 @@
 #include "debug.h"
 
 #define ANI_ANIMATION_STEPS     (5) // steps
-#define ANI_FIXED_STEPS         (LED_COLS) // steps
+#define ANI_FIXED_STEPS         (1) // steps
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
