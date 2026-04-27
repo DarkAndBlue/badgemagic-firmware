@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [master]
 
-permissions:
-  contents: read
-
 env:
   MRS_TOOLCHAIN: MRS_Toolchain_Linux_x64_V1.92
   USBC_BUILD_DIR: usb-c
@@ -39,15 +36,8 @@ jobs:
       - name: Build firmware
         run: |
           export PREFIX=${{ env.MRS_TOOLCHAIN }}/RISC-V_Embedded_GCC/bin/riscv-none-embed-
-
-          VERSION="${GITHUB_REF_NAME}-${GITHUB_SHA::7}"
-          VERSION_ABBR="${GITHUB_REF_NAME}"
-
-          BUILD_DIR=${{ env.USBC_BUILD_DIR }} USBC_VERSION=1 VERSION="$VERSION" VERSION_ABBR="$VERSION_ABBR" make clean
-          BUILD_DIR=${{ env.USBC_BUILD_DIR }} USBC_VERSION=1 VERSION="$VERSION" VERSION_ABBR="$VERSION_ABBR" make all -j$(nproc)
-
-          BUILD_DIR=${{ env.MICROB_BUILD_DIR }} VERSION="$VERSION" VERSION_ABBR="$VERSION_ABBR" make clean
-          BUILD_DIR=${{ env.MICROB_BUILD_DIR }} VERSION="$VERSION" VERSION_ABBR="$VERSION_ABBR" make all -j$(nproc)
+          BUILD_DIR=${{ env.USBC_BUILD_DIR }} USBC_VERSION=1 make -j$(nproc)
+          BUILD_DIR=${{ env.MICROB_BUILD_DIR }} make -j$(nproc)
 
       - uses: actions/upload-artifact@v4
         with:
@@ -55,17 +45,3 @@ jobs:
           path: |
             ${{ env.USBC_BUILD_DIR }}/badgemagic-*
             ${{ env.MICROB_BUILD_DIR }}/badgemagic-*
-
-      # Skip upload APK for pull requests & only allow binaries build from master
-      - if: ${{ github.event_name != 'pull_request' && github.ref_name == 'master' }}
-        name: Upload firmware binaries to bin branch
-        run: |
-          git config --global user.name "${{ github.workflow }}"
-          git config --global user.email "gh-actions@${{ github.repository_owner }}"
-
-          git checkout --orphan bin
-          git reset
-          git add ${{ env.USBC_BUILD_DIR }}/badgemagic-*${{ env.BIN_TYPES }}
-          git add ${{ env.MICROB_BUILD_DIR }}/badgemagic-*${{ env.BIN_TYPES }}
-          git commit -am "[Auto] Update firmware binaries from ${{ github.ref_name }} ($(date +%Y-%m-%d.%H:%M:%S))"
-          git push --force origin bin
