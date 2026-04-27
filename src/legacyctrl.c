@@ -22,7 +22,7 @@ int legacy_ble_rx(uint8_t *val, uint16_t len)
 	PRINT("\n");
 
 	if (c == 0) {
-		if (memcmp(val, "wang", 4)) {
+		if (memcmp(val, "wang02", 6)) {
 			PRINT("Not a header\n");
 			return -2;
 		} else {
@@ -34,7 +34,7 @@ int legacy_ble_rx(uint8_t *val, uint16_t len)
 			}
 		}
 	} else { // Re attempt after a failed transfer
-		if (!memcmp(val, "wang", 4)) {
+		if (!memcmp(val, "wang02", 6)) {
 			free(data);
 			c = 0;
 			data = malloc(sizeof(data_legacy_t));
@@ -83,7 +83,7 @@ int legacy_usb_rx(uint8_t *buf, uint16_t len)
 				buf[4], buf[5], buf[6], buf[7]);
 
 	if (rx_len == 0) {
-		if (memcmp(buf, "wang", 4))
+		if (memcmp(buf, "wang02", 6))
 			return -1;
 
 		int init_len = len > LEGACY_HEADER_SIZE ? len : sizeof(data_legacy_t);

@@ -115,7 +115,7 @@ void load_bmlist()
 {
 	data_legacy_t header;
 	data_get_header(&header);
-	if (memcmp(header.header, "wang", 4))
+	if (memcmp(header.header, "wang02", 6))
 		return; // There is no bitmap stored in flash
 
 	bm_t *curr_bm = bmlist_current();

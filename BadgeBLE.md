@@ -34,7 +34,7 @@ The badge supports up to 32 bitmaps which can have various features enabled.
 
 | offset    | byte-size | format       | name       | description  |
 | --------- | --------- | ------------ | ---------- | ------------ |
-| 00h       | 6         | uint8[6]     | header     | "wang\0\0" - magic number to indicate a new data frame begin |
+| 00h       | 6         | uint8[6]     | header     | "wang02" - magic number to indicate a new data frame begin |
 | 06h       | 4         | uint32       | flash      | bitfield describing which of the 32 bitmaps are flashing |
 | 0Ah       | 4         | uint32       | marquee    | bitfield describing which of the 32 bitmaps feature an animated border |
 | 0Eh       | 32        | uint8[32]    | modes      | speed+mode for each of the 32 bitmaps. See below. |

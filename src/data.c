@@ -33,11 +33,15 @@ uint16_t data_flash2newmem(uint8_t **chunk, uint32_t n)
 {
 	data_legacy_t header;
 	data_get_header(&header);
-	if (memcmp(header.header, "wang", 4))
+	if (memcmp(header.header, "wang02", 6))
 		return 0;
 
 	uint16_t size = bswap16(header.sizes[n]) * LED_ROWS;
-	if (size == 0)
+	if (size == 0 || size > 0x4000) // Sanity check: max 16KB per image
+		return 0;
+
+	uint32_t total_size = bigendian16_sum(header.sizes, MAX_MESSAGES) * LED_ROWS;
+	if (total_size > 0x8000) // Sanity check: max 32KB total Data Flash
 		return 0;
 
 	uint16_t offs = LEGACY_HEADER_SIZE
